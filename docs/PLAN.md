@@ -8,6 +8,7 @@
 - Admin dashboard istatistikleri için endpoint eklendi.
 - Order transaction flow'u (stok düşme, sepet temizleme) DB transaction içinde kurgulandı.
 - GitHub Actions "Deploy Laravel Project" FTP hatası düzeltildi (timeout limiti artırıldı, gereksiz dosyalar exclude edildi).
+- FTP Deployment işlemi için doğru cPanel FTP bilgileri ve `laravel.rtyazilim.com` dizin hedeflemesi yapıldı.
 
 ## DEVAM EDENLER
 - Veritabanı seeding ve mock veri üretimi (manuel testler için).
