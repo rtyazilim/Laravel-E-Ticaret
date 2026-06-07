@@ -9,29 +9,37 @@
 - Order transaction flow'u (stok düşme, sepet temizleme) DB transaction içinde kurgulandı.
 - GitHub Actions "Deploy Laravel Project" FTP hatası düzeltildi (timeout limiti artırıldı, gereksiz dosyalar exclude edildi).
 - FTP Deployment işlemi için doğru cPanel FTP bilgileri ve `laravel.rtyazilim.com` dizin hedeflemesi yapıldı.
+- Takılı kalan GitHub Actions workflow iptal edildi ve FTP sunucusu (cpanel) üzerindeki tüm dosyalar temizlendi.
+- Manuel dosya aktarımı kontrol edildi. (app, public, routes vb. yüklendi).
+- GitHub Actions workflow içerisine PHP Syntax kontrolü (lint) eklendi ve mevcut dosyaların tekrar yüklenmesini önleyen delta-sync kuralı garanti altına alındı.
 
 ## DEVAM EDENLER
-- Veritabanı seeding ve mock veri üretimi (manuel testler için).
+- Veritabanı seeding ve mock veri üretimi.
 
-## YAPILACAKLAR
-- Role-based authorization middleware (Admin/Customer) eklenecek. (Şu an routes koruması yetersiz).
-- Payment webhook security (imza doğrulama) eklenecek.
-- Frontend (Blade) arayüzünün API endpoint'lerine bağlanması.
+## YAPILACAKLAR (YENİ UYGULAMA PLANI)
+1. **Sunucu / Hosting Eksiklerinin Giderilmesi:**
+   - FTP üzerinde `.env` dosyası oluşturulacak (veritabanı bilgileri girilecek).
+   - `vendor/` klasörü FTP'ye aktarılacak (veya sunucuda `composer install` çalıştırılacak).
+   - cPanel üzerinden domain (laravel.rtyazilim.com) kök dizini `/public_html/laravel.rtyazilim.com/public` olarak güncellenecek (aksi halde güvenlik açığı ve 403/404 hataları oluşur).
+2. **Güvenlik ve Yetkilendirme (Auth & Roles):**
+   - Role-based middleware oluşturulacak ve Admin endpoint'lerine eklenecek.
+3. **Ödeme Sistemi (Payment Webhook):**
+   - Webhook endpoint'ine provider (Iyzico/Stripe) imza doğrulama mekanizması kodlanacak.
+4. **Veri Tutarlılığı (Concurrency):**
+   - Sipariş oluşturulurken stok kontrollerinde Row-Level Lock (`lockForUpdate`) eklenecek.
 
 ## API DURUMU
 - Response yapısı standardize edildi: `{ "success": true, "data": {}, "message": null }`
-- Endpoint'ler: `/api/auth/*`, `/api/admin/stats` aktif, ancak admin yetki kontrolü (Role/Middleware) eksik.
+- Endpoint'ler: `/api/auth/*`, `/api/admin/stats` aktif, ancak admin yetki kontrolü eksik.
 - Webhook endpoint'i boş stub halinde.
 
 ## VERİTABANI DURUMU
-- `categories`, `products`, `product_images`, `carts`, `cart_items`, `orders`, `order_items`, `payments` tabloları foreign key ve soft delete destekli.
-- Sipariş tutarları hesaplanırken snapshot alınıyor. Ancak N+1 query engellemek için with() kullanımında bazı controller tarafları tam net değil.
+- Tablolar foreign key ve soft delete destekli. N+1 optimizasyonları incelenecek.
 
 ## RİSKLER
-- **Security:** Payment Webhook ucu tamamen açık, imza doğrulaması yok. Sahte tetiklemelere açık.
-- **Security:** Role-based yetki mekanizması yok, yetkisiz admin erişimi riski var.
-- **Business:** Payment provider mock mantığı ile çalışıyor, gerçek API integrasyonu yapılmamış.
-- **Data Integrity:** Stok kontrolü yapılıyor ancak transaction öncesi race-condition (concurrent checkout) için row-level lock (lockForUpdate) kullanılmıyor.
+- **Deployment:** `vendor` klasörü olmadan uygulama 500 hatası verir. Kök dizin `/public` olarak ayarlanmazsa `.env` gibi dosyalar dışarıdan erişilebilir (Büyük güvenlik riski).
+- **Security:** Webhook doğrulama yok, Role middleware yok.
+- **Data Integrity:** Stok için concurrent checkout koruması yok.
 
 ## SON DURUM ÖZETİ
-- Proje iskelet ve akış olarak çalışıyor ancak gerçek production ortamına çıkmak için güvenlik ve concurrency (race-condition) önlemleri açısından oldukça yetersiz. Ciddi yetki ve webhook açıkları mevcut.
+- Proje kod tabanı olarak hazır ancak manuel FTP aktarımında bağımlılıklar (`vendor`) ve environment (`.env`) eksik. Ayrıca sunucu dizin hedeflemesi `/public` klasörünü işaret etmeli. Kod tarafında ise üretim (production) güvenliği için rol, webhook koruması ve veritabanı kilit (lock) mekanizmalarının kodlanması gerekmektedir.
