@@ -13,10 +13,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+use App\Http\Controllers\HomeController;
+
 // Home
-Route::get('/', function () {
-    return redirect('/products');
-});
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 // Auth (Mock Routes for UI Preview)
 Route::get('/login', function () {
