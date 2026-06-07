@@ -1,10 +1,8 @@
 <?php
 
-use App\Modules\User\Http\Controllers\UserController;
+use App\Modules\User\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('api')
-    ->middleware(['auth:sanctum', 'role:admin'])
-    ->group(function (): void {
-        Route::apiResource('users', UserController::class);
-    });
+Route::prefix('api/admin')->middleware(['auth:sanctum'])->group(function () {
+    Route::get('/stats', [AdminController::class, 'dashboardStats']);
+});

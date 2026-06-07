@@ -4,6 +4,7 @@ namespace App\Modules\Product\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Modules\Product\Application\Services\ProductService;
+use App\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -19,13 +20,13 @@ class ProductController extends Controller
     public function index(): JsonResponse
     {
         $products = $this->productService->getAllActiveProducts();
-        return response()->json(['data' => $products]);
+        return ApiResponse::success($products, 'Products retrieved successfully');
     }
 
     public function show(int $id): JsonResponse
     {
         $product = $this->productService->getProductById($id);
-        return response()->json(['data' => $product]);
+        return ApiResponse::success($product, 'Product retrieved successfully');
     }
 
     public function store(Request $request): JsonResponse
@@ -41,7 +42,7 @@ class ProductController extends Controller
         ]);
 
         $product = $this->productService->createProduct($validated);
-        return response()->json(['data' => $product], 201);
+        return ApiResponse::success($product, 'Product created successfully', 201);
     }
 
     public function update(Request $request, int $id): JsonResponse
@@ -57,12 +58,12 @@ class ProductController extends Controller
         ]);
 
         $product = $this->productService->updateProduct($id, $validated);
-        return response()->json(['data' => $product]);
+        return ApiResponse::success($product, 'Product updated successfully');
     }
 
     public function destroy(int $id): JsonResponse
     {
         $this->productService->deleteProduct($id);
-        return response()->json(null, 204);
+        return ApiResponse::success([], 'Product deleted successfully', 200);
     }
 }

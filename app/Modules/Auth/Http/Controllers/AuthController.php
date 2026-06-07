@@ -3,52 +3,62 @@
 namespace App\Modules\Auth\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Modules\Auth\Application\Services\AuthService;
-use App\Modules\Auth\Http\Requests\LoginRequest;
-use App\Modules\Auth\Http\Requests\RegisterRequest;
-use App\Modules\User\Http\Resources\UserResource;
+use App\Modules\User\Domain\Models\User;
 use App\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
-    use ApiResponse;
-
-    public function __construct(private readonly AuthService $auth)
+    public function register(Request $request): JsonResponse
     {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        $user = User::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
+        ]);
+
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        return ApiResponse::success([
+            'user' => $user,
+            'token' => $token
+        ], 'User registered successfully', 201);
     }
 
-    public function register(RegisterRequest $request): JsonResponse
+    public function login(Request $request): JsonResponse
     {
-        $result = $this->auth->register($request->validated());
+        $request->validate([
+            'email' => 'required|string|email',
+            'password' => 'required|string',
+        ]);
 
-        return $this->success([
-            'user' => new UserResource($result['user']),
-            'token' => $result['token'],
-        ], 'Registered.', Response::HTTP_CREATED);
-    }
+        $user = User::where('email', $request->email)->first();
 
-    public function login(LoginRequest $request): JsonResponse
-    {
-        $result = $this->auth->login($request->validated());
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            return ApiResponse::error('Invalid credentials', [], 401);
+        }
 
-        return $this->success([
-            'user' => new UserResource($result['user']),
-            'token' => $result['token'],
-        ], 'Logged in.');
-    }
+        $token = $user->createToken('auth_token')->plainTextToken;
 
-    public function me(Request $request): JsonResponse
-    {
-        return $this->success(new UserResource($request->user()));
+        return ApiResponse::success([
+            'user' => $user,
+            'token' => $token
+        ], 'Login successful');
     }
 
     public function logout(Request $request): JsonResponse
     {
-        $this->auth->logout($request->user());
+        $request->user()->currentAccessToken()->delete();
 
-        return $this->success(null, 'Logged out.');
+        return ApiResponse::success([], 'Logged out successfully');
     }
 }

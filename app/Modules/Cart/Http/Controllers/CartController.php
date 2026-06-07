@@ -4,6 +4,7 @@ namespace App\Modules\Cart\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Modules\Cart\Application\Services\CartService;
+use App\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -34,12 +35,10 @@ class CartController extends Controller
             return $item->quantity * $item->product->price;
         });
 
-        return response()->json([
-            'data' => $cart,
-            'meta' => [
-                'subtotal' => round($subtotal, 2)
-            ]
-        ]);
+        $cartData = $cart->toArray();
+        $cartData['meta'] = ['subtotal' => round($subtotal, 2)];
+
+        return ApiResponse::success($cartData, 'Cart retrieved successfully');
     }
 
     public function store(Request $request): JsonResponse
@@ -52,7 +51,7 @@ class CartController extends Controller
         $cart = $this->cartService->getCartForUser(Auth::id(), $this->getSessionId($request));
         $item = $this->cartService->addItem($cart, $validated['product_id'], $validated['quantity']);
 
-        return response()->json(['data' => $item], 201);
+        return ApiResponse::success($item, 'Item added to cart', 201);
     }
 
     public function update(Request $request, int $itemId): JsonResponse
@@ -63,12 +62,12 @@ class CartController extends Controller
 
         $item = $this->cartService->updateItemQuantity($itemId, $validated['quantity']);
         
-        return response()->json(['data' => $item]);
+        return ApiResponse::success($item, 'Cart item updated');
     }
 
     public function destroy(int $itemId): JsonResponse
     {
         $this->cartService->removeItem($itemId);
-        return response()->json(null, 204);
+        return ApiResponse::success([], 'Item removed from cart', 200);
     }
 }

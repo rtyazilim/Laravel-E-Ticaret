@@ -5,6 +5,7 @@ namespace App\Modules\Order\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Modules\Cart\Application\Services\CartService;
 use App\Modules\Order\Application\Services\OrderService;
+use App\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -24,13 +25,13 @@ class OrderController extends Controller
     public function index(): JsonResponse
     {
         $orders = $this->orderService->getOrdersForUser(Auth::id());
-        return response()->json(['data' => $orders]);
+        return ApiResponse::success($orders, 'Orders retrieved successfully');
     }
 
     public function show(int $id): JsonResponse
     {
         $order = $this->orderService->getOrderByIdForUser($id, Auth::id());
-        return response()->json(['data' => $order]);
+        return ApiResponse::success($order, 'Order retrieved successfully');
     }
 
     public function store(Request $request): JsonResponse
@@ -50,9 +51,9 @@ class OrderController extends Controller
                 $validated['billing_address'] ?? null
             );
             
-            return response()->json(['data' => $order], 201);
+            return ApiResponse::success($order, 'Order created successfully', 201);
         } catch (\Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 400);
+            return ApiResponse::error($e->getMessage(), [], 400);
         }
     }
 }

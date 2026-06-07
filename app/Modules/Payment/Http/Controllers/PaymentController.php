@@ -5,6 +5,7 @@ namespace App\Modules\Payment\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Modules\Order\Domain\Models\Order;
 use App\Modules\Payment\Application\Services\PaymentService;
+use App\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -37,12 +38,12 @@ class PaymentController extends Controller
             $idempotencyKey
         );
 
-        return response()->json(['data' => $payment]);
+        return ApiResponse::success($payment, 'Payment initiated successfully');
     }
 
     public function webhook(Request $request): JsonResponse
     {
         // Stub for external provider webhook
-        return response()->json(['status' => 'received']);
+        return ApiResponse::success([], 'Webhook received');
     }
 }
