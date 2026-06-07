@@ -13,6 +13,7 @@
 - Manuel dosya aktarımı kontrol edildi. (app, public, routes vb. yüklendi).
 - GitHub Actions workflow içerisine PHP Syntax kontrolü (lint) eklendi ve mevcut dosyaların tekrar yüklenmesini önleyen delta-sync kuralı garanti altına alındı.
 - PHP Syntax kontrolü adımındaki uzun süren tıkanıklık (vendor taraması) vendor klasörünün hariç tutulmasıyla çözüldü.
+- FTP deployment işlemi sırasındaki hassas bağlantı bilgileri (sunucu, şifre, kullanıcı) `deploy.yml` üzerinden kaldırılarak doğrudan GitHub Secrets (`FTP_SERVER`, `FTP_USERNAME`, `FTP_PASSWORD`) ile güvenli hale getirildi. Klasör hedefi `/laravel.rtyazilim.com/` olarak kod içerisine sabitlendi.
 
 ## DEVAM EDENLER
 - Veritabanı seeding ve mock veri üretimi.

@@ -29,9 +29,9 @@ jobs:
     - name: 📂 Sync files
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
       with:
-        server: cpanel1.kayizer.com
-        username: rtyazil1
-        password: DFKBlmq2697EZgmy
+        server: ${{ secrets.FTP_SERVER }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
         server-dir: /laravel.rtyazilim.com/
         timeout: 1000000
         dangerous-clean-slate: false
