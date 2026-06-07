@@ -12,6 +12,8 @@ jobs:
     steps:
     - name: 🚚 Get latest code
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
 
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
@@ -27,4 +29,10 @@ jobs:
         server: ${{ secrets.FTP_SERVER }}
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
-        server-dir: /public_html/laravel/ # Lütfen cPanel'deki doğru klasör yolunu buraya yazın
+        server-dir: /public_html/laravel/
+        timeout: 1000000
+        exclude: |
+          **/.git*
+          **/.git*/**
+          **/node_modules/**
+          **/tests/**

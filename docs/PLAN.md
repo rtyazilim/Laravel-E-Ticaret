@@ -1,33 +1,36 @@
-# E-Commerce Backend Engine Plan
+## YAPILANLAR
+- Product, Cart, Order, Payment modülleri (Service, Controller, API Routes) oluşturuldu.
+- Modular Monolith mimari yapısı (app/Modules) kuruldu.
+- Database migration'lar (Category, Product, Cart, Order, Payment) tamamlandı.
+- Domain modelleri oluşturuldu.
+- API JSON yanıtları `ApiResponse` ile standart hale getirildi.
+- Sanctum tabanlı Auth (Login, Register, Logout) eklendi.
+- Admin dashboard istatistikleri için endpoint eklendi.
+- Order transaction flow'u (stok düşme, sepet temizleme) DB transaction içinde kurgulandı.
+- GitHub Actions "Deploy Laravel Project" FTP hatası düzeltildi (timeout limiti artırıldı, gereksiz dosyalar exclude edildi).
 
-## DONE
-- Database Migration for Products, Categories, Images, Carts, CartItems, Orders, OrderItems, Payments.
-- Domain Models created for all entities.
-- Product Module (Service, Controller, API Routes).
-- Cart Module (Service, Controller, API Routes).
-- Order Module (Service, Controller, API Routes).
-- Payment Module (Service, Controller, API Routes).
-- Modular Monolith architecture setup (app/Modules folder).
-- Standardizing API JSON responses via `ApiResponse` wrapper class.
-- Refactored all existing controllers to use standardized JSON response format.
-- Implementing Auth Module (Sanctum based API login/register).
-- Admin Module implementations (Dashboard stats endpoint).
+## DEVAM EDENLER
+- Veritabanı seeding ve mock veri üretimi (manuel testler için).
 
-## IN PROGRESS
-- Database seeding and mock data generation for manual testing and UI connection.
+## YAPILACAKLAR
+- Role-based authorization middleware (Admin/Customer) eklenecek. (Şu an routes koruması yetersiz).
+- Payment webhook security (imza doğrulama) eklenecek.
+- Frontend (Blade) arayüzünün API endpoint'lerine bağlanması.
 
-## TODO
-- Add Role-based authorization middleware usage across controllers (Admin vs Customer).
-- Connect frontend Blade UI directly to API endpoints via internal calls or hydrate them via Blade directly.
+## API DURUMU
+- Response yapısı standardize edildi: `{ "success": true, "data": {}, "message": null }`
+- Endpoint'ler: `/api/auth/*`, `/api/admin/stats` aktif, ancak admin yetki kontrolü (Role/Middleware) eksik.
+- Webhook endpoint'i boş stub halinde.
 
-## DATABASE CHANGES
-- Added `categories`, `products`, `product_images`, `carts`, `cart_items`, `orders`, `order_items`, `payments` tables with foreign keys and soft deletes.
+## VERİTABANI DURUMU
+- `categories`, `products`, `product_images`, `carts`, `cart_items`, `orders`, `order_items`, `payments` tabloları foreign key ve soft delete destekli.
+- Sipariş tutarları hesaplanırken snapshot alınıyor. Ancak N+1 query engellemek için with() kullanımında bazı controller tarafları tam net değil.
 
-## API CHANGES
-- Standardized JSON response structure implemented on all endpoints: `{ "success": true, "data": {}, "message": null }`
-- Added `/api/auth/register`, `/api/auth/login`, `/api/auth/logout`.
-- Added `/api/admin/stats` for overview KPIs.
+## RİSKLER
+- **Security:** Payment Webhook ucu tamamen açık, imza doğrulaması yok. Sahte tetiklemelere açık.
+- **Security:** Role-based yetki mekanizması yok, yetkisiz admin erişimi riski var.
+- **Business:** Payment provider mock mantığı ile çalışıyor, gerçek API integrasyonu yapılmamış.
+- **Data Integrity:** Stok kontrolü yapılıyor ancak transaction öncesi race-condition (concurrent checkout) için row-level lock (lockForUpdate) kullanılmıyor.
 
-## RISK ANALYSIS
-- Payment init currently uses mock 90% logic, will need real provider integration later.
-- UI layer (Blade components) currently not connected to the real DB. It needs to consume the Services or API endpoints.
+## SON DURUM ÖZETİ
+- Proje iskelet ve akış olarak çalışıyor ancak gerçek production ortamına çıkmak için güvenlik ve concurrency (race-condition) önlemleri açısından oldukça yetersiz. Ciddi yetki ve webhook açıkları mevcut.
