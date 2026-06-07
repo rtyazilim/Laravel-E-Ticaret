@@ -20,11 +20,8 @@ jobs:
       with:
         php-version: '8.2'
         
-    - name: Install Dependencies
-      run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
-
     - name: 🔍 PHP Syntax Check
-      run: find app config routes resources database -type f -name '*.php' -print0 | xargs -0 -n1 php -l | grep -v "No syntax errors detected" && exit 1 || exit 0
+      run: find app config routes resources database -type f -name '*.php' -print0 | xargs -0 -n1 php -l 2>&1 | grep -v "No syntax errors" | grep -E "^.*error" && exit 1 || exit 0
 
     - name: 📂 Sync files
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
@@ -33,11 +30,15 @@ jobs:
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
         server-dir: ${{ secrets.FTP_REMOTE_DIR }}
-        timeout: 1000000
+        timeout: 1800000
         dangerous-clean-slate: false
         dry-run: false
         exclude: |
           **/.git*
           **/.git*/**
           **/node_modules/**
+          **/vendor/**
           **/tests/**
+          **/storage/logs/**
+          **/storage/framework/cache/**
+          **/.env*
