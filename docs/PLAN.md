@@ -12,6 +12,7 @@
 - Takılı kalan GitHub Actions workflow iptal edildi ve FTP sunucusu (cpanel) üzerindeki tüm dosyalar temizlendi.
 - Manuel dosya aktarımı kontrol edildi. (app, public, routes vb. yüklendi).
 - GitHub Actions workflow içerisine PHP Syntax kontrolü (lint) eklendi ve mevcut dosyaların tekrar yüklenmesini önleyen delta-sync kuralı garanti altına alındı.
+- PHP Syntax kontrolü adımındaki uzun süren tıkanıklık (vendor taraması) vendor klasörünün hariç tutulmasıyla çözüldü.
 
 ## DEVAM EDENLER
 - Veritabanı seeding ve mock veri üretimi.

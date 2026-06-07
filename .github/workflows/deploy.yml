@@ -24,7 +24,7 @@ jobs:
       run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
     - name: 🔍 PHP Syntax Check
-      run: find . -type f -name '*.php' -print0 | xargs -0 -n1 php -l | grep -v "No syntax errors detected" && exit 1 || exit 0
+      run: find app config routes resources database -type f -name '*.php' -print0 | xargs -0 -n1 php -l | grep -v "No syntax errors detected" && exit 1 || exit 0
 
     - name: 📂 Sync files
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
