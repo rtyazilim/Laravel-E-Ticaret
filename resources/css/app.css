@@ -1,23 +1,11 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
 
-@layer base {
-    html {
-        scroll-behavior: smooth;
-    }
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
 
-    body {
-        @apply bg-slate-50 text-slate-950 antialiased dark:bg-slate-950 dark:text-slate-100;
-    }
-}
-
-@layer components {
-    .glass-panel {
-        @apply border border-white/60 bg-white/85 shadow-soft backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/80;
-    }
-
-    .focus-ring {
-        @apply focus:outline-none focus:ring-4 focus:ring-brand-500/20;
-    }
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
 }
