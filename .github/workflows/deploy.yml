@@ -32,6 +32,7 @@ jobs:
       run: |
         sudo apt-get install -y lftp
         lftp -c "
+          set ssl:verify-certificate no;
           set ftp:ssl-allow yes;
           set ftp:ssl-protect-data true;
           set ftp:passive-mode true;
