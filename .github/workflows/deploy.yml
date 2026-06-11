@@ -40,7 +40,7 @@ jobs:
           set net:max-retries 5;
           set net:timeout 30;
           open -u '$FTP_USER','$FTP_PASS' $FTP_SERVER;
-          mirror --reverse --delete --verbose \
+          mirror --reverse --verbose \
             --exclude-glob .git \
             --exclude-glob .env \
             --exclude-glob .env.* \
@@ -51,5 +51,7 @@ jobs:
             --exclude 'storage/framework/cache/' \
             --exclude 'storage/framework/sessions/' \
             --exclude 'storage/framework/views/' \
+            --exclude 'storage/app/' \
+            --exclude 'public/storage/' \
             . $FTP_DIR;
         "
