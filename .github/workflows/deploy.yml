@@ -21,7 +21,9 @@ jobs:
         php-version: '8.2'
         
     - name: 🔍 PHP Syntax Check
-      run: find app config routes resources database -type f -name '*.php' -print0 | xargs -0 -n1 php -l 2>&1 | grep -v "No syntax errors" | grep -E "^.*error" && exit 1 || exit 0
+      run: |
+        echo "Checking PHP syntax..."
+        find app config routes resources database -type f -name '*.php' -exec php -l {} \; | grep -i "parse error\|fatal error" && exit 1 || echo "Syntax check passed!"
 
     - name: 📂 Sync files via lftp
       env:
@@ -41,7 +43,7 @@ jobs:
           set net:max-retries 5;
           set net:timeout 30;
           open -u '$FTP_USER','$FTP_PASS' $FTP_SERVER;
-          mirror --reverse --verbose \
+          mirror --reverse --verbose --ignore-time \
             --exclude-glob .git \
             --exclude-glob .env \
             --exclude-glob .env.* \
