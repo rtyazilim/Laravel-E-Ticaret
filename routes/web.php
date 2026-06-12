@@ -8,6 +8,40 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [StorefrontController::class, 'index'])->name('storefront.index');
 Route::get('/product/{slug}', [ProductController::class, 'show'])->name('storefront.show');
 
+Route::get('/setup-db', function() {
+    $envPath = base_path('.env');
+    $envExamplePath = base_path('.env.example');
+
+    if (!file_exists($envPath) && file_exists($envExamplePath)) {
+        copy($envExamplePath, $envPath);
+    }
+
+    if (!file_exists($envPath)) {
+        return "No .env found";
+    }
+
+    $env = file_get_contents($envPath);
+    $updates = [
+        'DB_CONNECTION' => 'mysql',
+        'DB_HOST' => '127.0.0.1',
+        'DB_PORT' => '3306',
+        'DB_DATABASE' => 'rtyazil1_laravel',
+        'DB_USERNAME' => 'rtyazil1_laravel_merkez',
+        'DB_PASSWORD' => '"9gPWkqy9PLwWH+t"'
+    ];
+
+    foreach ($updates as $key => $value) {
+        if (preg_match("/^{$key}=.*/m", $env)) {
+            $env = preg_replace("/^{$key}=.*/m", "{$key}={$value}", $env);
+        } else {
+            $env .= "\n{$key}={$value}";
+        }
+    }
+
+    file_put_contents($envPath, $env);
+    return ".env successfully updated for MySQL production!";
+});
+
 Route::prefix('cart')->group(function () {
     Route::get('/', [CartController::class, 'index'])->name('cart.index');
     Route::post('/add', [CartController::class, 'add'])->name('cart.add');
