@@ -8,16 +8,9 @@ use Illuminate\View\View;
 
 class StorefrontController extends Controller
 {
-    public function index(): View
+    public function index(ListProductsAction $action): View
     {
-        try {
-            \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
-            \Illuminate\Support\Facades\Artisan::call('db:seed', ['--force' => true]);
-        } catch (\Exception $e) {
-            // ignore
-        }
-
-        $products = Product::latest()->take(10)->get();
+        $products = $action->execute();
 
         return view('storefront.index', compact('products'));
     }
