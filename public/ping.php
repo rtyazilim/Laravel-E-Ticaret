@@ -1,0 +1,2 @@
+<?php
+echo "HELLO PHP IS WORKING. PHP VERSION: " . PHP_VERSION;
