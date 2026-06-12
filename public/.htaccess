@@ -1,6 +1,3 @@
-<FilesMatch "\.(php|phtml)$">
-    SetHandler application/x-httpd-ea-php84
-</FilesMatch>
 
 <IfModule mod_rewrite.c>
     <IfModule mod_negotiation.c>
