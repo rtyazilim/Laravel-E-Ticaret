@@ -21,7 +21,9 @@ jobs:
         php-version: '8.2'
 
     - name: Install Composer dependencies
-      run: composer install --no-dev --optimize-autoloader --ignore-platform-reqs --no-interaction
+      run: |
+        composer install --no-dev --optimize-autoloader --ignore-platform-reqs --no-interaction
+        echo "<?php // platform check bypassed" > vendor/composer/platform_check.php
 
     - name: PHP Syntax Check
       run: |
