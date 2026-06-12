@@ -50,7 +50,7 @@ jobs:
           set net:max-retries 5;
           set net:timeout 30;
           open -u '$FTP_USER','$FTP_PASS' $FTP_SERVER;
-          mirror --reverse --verbose \
+          mirror --reverse --verbose --ignore-time \
             --exclude-glob .git \
             --exclude-glob .env \
             --exclude-glob .env.* \
@@ -63,4 +63,5 @@ jobs:
             --exclude 'storage/app/' \
             --exclude 'public/storage/' \
             . $FTP_DIR;
+          put vendor/composer/autoload_real.php -o $FTP_DIR/vendor/composer/autoload_real.php;
         "
