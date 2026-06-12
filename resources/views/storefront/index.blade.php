@@ -56,10 +56,24 @@
 
                 <!-- Icons & User Actions -->
                 <div class="flex items-center space-x-6">
-                    <a href="#" class="hidden md:flex flex-col items-center justify-center text-gray-600 hover:text-rose-600 transition-colors group">
-                        <svg class="w-6 h-6 mb-1 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-                        <span class="text-[11px] font-semibold tracking-wide">Giriş Yap</span>
-                    </a>
+                    @auth
+                        @if(auth()->user()->hasRole('admin', 'web'))
+                            <a href="{{ route('admin.dashboard') }}" class="hidden md:flex flex-col items-center justify-center text-gray-600 hover:text-rose-600 transition-colors group">
+                                <svg class="w-6 h-6 mb-1 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                                <span class="text-[11px] font-semibold tracking-wide">Hesabım (Admin)</span>
+                            </a>
+                        @else
+                            <a href="{{ route('account.dashboard') }}" class="hidden md:flex flex-col items-center justify-center text-gray-600 hover:text-rose-600 transition-colors group">
+                                <svg class="w-6 h-6 mb-1 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                                <span class="text-[11px] font-semibold tracking-wide">Hesabım</span>
+                            </a>
+                        @endif
+                    @else
+                        <a href="{{ route('login') }}" class="hidden md:flex flex-col items-center justify-center text-gray-600 hover:text-rose-600 transition-colors group">
+                            <svg class="w-6 h-6 mb-1 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                            <span class="text-[11px] font-semibold tracking-wide">Giriş Yap</span>
+                        </a>
+                    @endauth
                     <a href="#" class="hidden md:flex flex-col items-center justify-center text-gray-600 hover:text-rose-600 transition-colors group">
                         <svg class="w-6 h-6 mb-1 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
                         <span class="text-[11px] font-semibold tracking-wide">Favorilerim</span>

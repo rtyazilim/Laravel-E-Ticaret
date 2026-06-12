@@ -44,6 +44,12 @@ Route::prefix('checkout')->group(function () {
     Route::post('/submit', [CheckoutController::class, 'submit'])->name('checkout.submit');
 });
 
+// Customer Auth
+Route::get('/login', [App\Http\Controllers\AuthController::class, 'showLogin'])->name('login');
+Route::post('/login', [App\Http\Controllers\AuthController::class, 'login'])->name('login.post')->middleware('throttle:5,1');
+Route::get('/logout', [App\Http\Controllers\AuthController::class, 'logout'])->name('logout');
+Route::post('/logout', [App\Http\Controllers\AuthController::class, 'logout'])->name('logout.post');
+
 // Admin Auth
 Route::get('/admin/login', [AdminAuthController::class, 'showLogin'])->name('admin.login');
 Route::post('/admin/login', [AdminAuthController::class, 'login'])->name('admin.login.post')->middleware('throttle:5,1');
