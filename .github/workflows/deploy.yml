@@ -38,6 +38,8 @@ jobs:
         FTP_DIR: ${{ secrets.FTP_REMOTE_DIR }}
       run: |
         sudo apt-get install -y lftp
+        find . -type d -exec chmod 755 {} \;
+        find . -type f -exec chmod 644 {} \;
         lftp -c "
           set ssl:verify-certificate no;
           set ftp:ssl-allow yes;
