@@ -24,6 +24,20 @@ Route::prefix('cart')->group(function () {
     Route::post('/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
 });
 
+Route::get('/run-migrations', function () {
+    try {
+        \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+        $migrateOutput = \Illuminate\Support\Facades\Artisan::output();
+        
+        \Illuminate\Support\Facades\Artisan::call('db:seed', ['--force' => true]);
+        $seedOutput = \Illuminate\Support\Facades\Artisan::output();
+        
+        return "Migrations:<br><pre>$migrateOutput</pre><br>Seeders:<br><pre>$seedOutput</pre>";
+    } catch (\Exception $e) {
+        return "Error: " . $e->getMessage();
+    }
+});
+
 // Checkout
 Route::prefix('checkout')->group(function () {
     Route::get('/', [CheckoutController::class, 'index'])->name('checkout.index');
