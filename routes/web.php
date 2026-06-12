@@ -21,3 +21,11 @@ Route::prefix('checkout')->group(function () {
     Route::post('/submit', [CheckoutController::class, 'submit'])->name('checkout.submit');
 });
 
+use App\Http\Controllers\Admin\OrderController;
+
+Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
+    Route::get('/orders', [OrderController::class, 'index'])->name('admin.orders.index');
+    Route::get('/orders/{id}', [OrderController::class, 'show'])->name('admin.orders.show');
+    Route::post('/orders/{id}/status', [OrderController::class, 'updateStatus'])->name('admin.orders.update-status');
+});
+

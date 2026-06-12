@@ -11,4 +11,14 @@ class OrderRepository extends BaseRepository
     {
         parent::__construct($model);
     }
+
+    public function paginateWithUser(int $perPage = 15)
+    {
+        return $this->model->with('user')->latest()->paginate($perPage);
+    }
+
+    public function findByIdWithItems(string $id): ?Order
+    {
+        return $this->model->with(['items.product', 'user'])->findOrFail($id);
+    }
 }
