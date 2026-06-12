@@ -7,10 +7,10 @@ on:
 
 jobs:
   web-deploy:
-    name: 🎉 Deploy
+    name: Deploy
     runs-on: ubuntu-latest
     steps:
-    - name: 🚚 Get latest code
+    - name: Get latest code
       uses: actions/checkout@v4
       with:
         fetch-depth: 0
@@ -19,13 +19,16 @@ jobs:
       uses: shivammathur/setup-php@v2
       with:
         php-version: '8.2'
-        
-    - name: 🔍 PHP Syntax Check
+
+    - name: Install Composer dependencies
+      run: composer install --no-dev --optimize-autoloader --ignore-platform-reqs --no-interaction
+
+    - name: PHP Syntax Check
       run: |
         echo "Checking PHP syntax..."
         find app config routes resources database -type f -name '*.php' -exec php -l {} \; | grep -i "parse error\|fatal error" && exit 1 || echo "Syntax check passed!"
 
-    - name: 📂 Sync files via lftp
+    - name: Sync files via lftp
       env:
         FTP_SERVER: ${{ secrets.FTP_SERVER }}
         FTP_USER: ${{ secrets.FTP_USERNAME }}
@@ -47,7 +50,6 @@ jobs:
             --exclude-glob .git \
             --exclude-glob .env \
             --exclude-glob .env.* \
-            --exclude vendor/ \
             --exclude node_modules/ \
             --exclude tests/ \
             --exclude 'storage/logs/' \
