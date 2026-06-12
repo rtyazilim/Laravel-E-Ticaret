@@ -55,12 +55,14 @@
                     <div class="product-card bg-white rounded-xl border border-gray-100 overflow-hidden transition-all duration-300 ease-in-out flex flex-col h-full group">
                         
                         <div class="aspect-w-1 aspect-h-1 w-full overflow-hidden bg-gray-100 xl:aspect-w-7 xl:aspect-h-8 relative">
-                            <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="w-full h-48 object-cover object-center group-hover:opacity-90 transition-opacity" onerror="this.onerror=null; this.src='{{ asset('images/placeholder-product.png') }}';">
+                            <a href="{{ route('storefront.show', $product->slug) }}">
+                                <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="w-full h-48 object-cover object-center group-hover:opacity-90 transition-opacity" onerror="this.onerror=null; this.src='{{ asset('images/placeholder-product.png') }}';">
+                            </a>
                         </div>
                         
                         <div class="p-5 flex flex-col flex-grow">
                             <h3 class="text-sm text-gray-700 font-medium line-clamp-1 mb-1" title="{{ $product->name }}">
-                                {{ $product->name }}
+                                <a href="{{ route('storefront.show', $product->slug) }}">{{ $product->name }}</a>
                             </h3>
                             
                             <p class="text-sm text-gray-500 line-clamp-2 flex-grow mb-4">

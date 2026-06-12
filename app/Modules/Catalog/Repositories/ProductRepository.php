@@ -23,13 +23,23 @@ class ProductRepository extends BaseRepository
                 ->latest()
                 ->paginate($perPage);
         } catch (\Exception $e) {
-            // DB bağlantısı yoksa boş paginator döndür
-            return new ManualPaginator(
-                new Collection([]),
-                0,
-                $perPage,
-                1
-            );
+            return new ManualPaginator(new Collection([]), 0, $perPage, 1);
+        }
+    }
+
+    public function findBySlugActive(string $slug): ?Product
+    {
+        try {
+            return $this->model
+                ->where('slug', $slug)
+                ->where('is_active', true)
+                ->firstOrFail();
+        } catch (\Exception $e) {
+            // Throw the exception if it's ModelNotFoundException, otherwise return null
+            if ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException) {
+                throw $e;
+            }
+            abort(500, 'Veritabanı bağlantı hatası');
         }
     }
 }
