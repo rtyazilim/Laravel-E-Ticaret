@@ -102,9 +102,9 @@
                         <p>₺{{ number_format($total, 2, ',', '.') }}</p>
                     </div>
                     <div class="mt-6">
-                        <button class="w-full bg-gray-900 border border-transparent rounded-xl shadow-sm py-4 px-4 text-base font-medium text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors">
+                        <a href="{{ route('checkout.index') }}" class="w-full inline-flex justify-center items-center bg-gray-900 border border-transparent rounded-xl shadow-sm py-4 px-4 text-base font-medium text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors">
                             Ödemeye Geç (Demo)
-                        </button>
+                        </a>
                     </div>
                 </div>
             </div>

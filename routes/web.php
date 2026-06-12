@@ -14,3 +14,10 @@ Route::prefix('cart')->group(function () {
     Route::post('/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
 });
 
+use App\Http\Controllers\CheckoutController;
+
+Route::prefix('checkout')->group(function () {
+    Route::get('/', [CheckoutController::class, 'index'])->name('checkout.index');
+    Route::post('/submit', [CheckoutController::class, 'submit'])->name('checkout.submit');
+});
+
