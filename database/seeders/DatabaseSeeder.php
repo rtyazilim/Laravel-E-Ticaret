@@ -17,21 +17,21 @@ class DatabaseSeeder extends Seeder
             RolePermissionSeeder::class,
         ]);
 
-        $admin = User::firstOrCreate(
+        $admin = User::updateOrCreate(
             ['email' => 'admin@rtyazilim.com'],
             [
                 'name'     => 'Admin',
-                'password' => bcrypt('Admin@2026!'),
+                'password' => bcrypt('RtAdmin#2026_Strong!'),
             ]
         );
         $adminRole = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
         $admin->assignRole($adminRole);
 
-        $user = User::firstOrCreate(
+        $user = User::updateOrCreate(
             ['email' => 'user@rtyazilim.com'],
             [
                 'name'     => 'Demo Kullanıcı',
-                'password' => bcrypt('User@2026!'),
+                'password' => bcrypt('RtUser#2026_Strong!'),
             ]
         );
         $customerRole = Role::firstOrCreate(['name' => 'customer', 'guard_name' => 'web']);
