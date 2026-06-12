@@ -49,37 +49,43 @@ class RolePermissionSeeder extends Seeder
             'system.settings', 'system.logs', 'system.users',
         ];
 
-        foreach ($permissions as $permission) {
-            Permission::firstOrCreate(['name' => $permission, 'guard_name' => 'api']);
+        foreach (['web', 'api'] as $guard) {
+            foreach ($permissions as $permission) {
+                Permission::firstOrCreate(['name' => $permission, 'guard_name' => $guard]);
+            }
+
+            $superAdmin = Role::firstOrCreate(['name' => 'super_admin', 'guard_name' => $guard]);
+            $superAdmin->givePermissionTo(Permission::where('guard_name', $guard)->get());
+
+            $admin = Role::firstOrCreate(['name' => 'admin', 'guard_name' => $guard]);
+            $admin->givePermissionTo(Permission::where('guard_name', $guard)->get());
+
+            $manager = Role::firstOrCreate(['name' => 'manager', 'guard_name' => $guard]);
+            $manager->givePermissionTo(
+                Permission::where('guard_name', $guard)->whereIn('name', [
+                    'product.read', 'product.update',
+                    'category.read', 'brand.read',
+                    'inventory.read', 'inventory.adjust',
+                    'order.read', 'order.update',
+                    'customer.read', 'customer.update',
+                    'invoice.read', 'payment.read',
+                    'shipment.read', 'shipment.track',
+                    'report.view',
+                ])->get()
+            );
+
+            $staff = Role::firstOrCreate(['name' => 'staff', 'guard_name' => $guard]);
+            $staff->givePermissionTo(
+                Permission::where('guard_name', $guard)->whereIn('name', [
+                    'product.read', 'category.read', 'brand.read',
+                    'inventory.read',
+                    'order.read', 'order.create',
+                    'customer.read',
+                    'shipment.read', 'shipment.track',
+                ])->get()
+            );
+
+            Role::firstOrCreate(['name' => 'customer', 'guard_name' => $guard]);
         }
-
-        $superAdmin = Role::firstOrCreate(['name' => 'super_admin', 'guard_name' => 'api']);
-        $superAdmin->givePermissionTo(Permission::all());
-
-        $admin = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'api']);
-        $admin->givePermissionTo(Permission::all());
-
-        $manager = Role::firstOrCreate(['name' => 'manager', 'guard_name' => 'api']);
-        $manager->givePermissionTo([
-            'product.read', 'product.update',
-            'category.read', 'brand.read',
-            'inventory.read', 'inventory.adjust',
-            'order.read', 'order.update',
-            'customer.read', 'customer.update',
-            'invoice.read', 'payment.read',
-            'shipment.read', 'shipment.track',
-            'report.view',
-        ]);
-
-        $staff = Role::firstOrCreate(['name' => 'staff', 'guard_name' => 'api']);
-        $staff->givePermissionTo([
-            'product.read', 'category.read', 'brand.read',
-            'inventory.read',
-            'order.read', 'order.create',
-            'customer.read',
-            'shipment.read', 'shipment.track',
-        ]);
-
-        Role::firstOrCreate(['name' => 'customer', 'guard_name' => 'api']);
     }
 }

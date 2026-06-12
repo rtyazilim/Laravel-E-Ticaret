@@ -1,65 +1,59 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Sipariş Yönetimi - Admin Panel</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
-    <style>body { font-family: 'Instrument Sans', sans-serif; }</style>
-</head>
-<body class="bg-gray-50 text-gray-800">
-    <nav class="bg-gray-900 text-white p-4">
-        <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <span class="text-xl font-bold">Admin Panel</span>
-            <a href="/" class="text-sm text-gray-300 hover:text-white">Mağazaya Dön</a>
-        </div>
-    </nav>
+@extends('layouts.admin')
 
-    <div class="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
-        <h1 class="text-2xl font-bold mb-6">Sipariş Listesi</h1>
+@section('title', 'Siparişler')
+@section('page_title', 'Sipariş Yönetimi')
+@section('page_subtitle', 'Tüm siparişlerin listesi')
 
-        <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-200">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
-                    <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Sipariş ID</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Kullanıcı</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Toplam Tutar</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Durum</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tarih</th>
-                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">İşlem</th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
-                    @foreach($orders as $order)
-                        <tr>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ substr($order->id, 0, 8) }}...</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $order->user->name ?? 'Misafir' }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">₺{{ number_format($order->total_price, 2, ',', '.') }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                    @if($order->status === 'pending') bg-yellow-100 text-yellow-800
-                                    @elseif($order->status === 'processing') bg-blue-100 text-blue-800
-                                    @elseif($order->status === 'shipped') bg-indigo-100 text-indigo-800
-                                    @elseif($order->status === 'cancelled') bg-red-100 text-red-800
-                                    @else bg-green-100 text-green-800 @endif">
-                                    {{ ucfirst($order->status) }}
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $order->created_at->format('d.m.Y H:i') }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <a href="{{ route('admin.orders.show', $order->id) }}" class="text-indigo-600 hover:text-indigo-900">Detay</a>
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-        
-        <div class="mt-4">
-            {{ $orders->links() }}
-        </div>
+@section('content')
+<div class="bg-slate-800 border border-slate-700 rounded-2xl overflow-hidden">
+    <div class="px-6 py-4 border-b border-slate-700 flex items-center justify-between">
+        <h2 class="text-sm font-semibold text-white">Sipariş Listesi</h2>
+        <span class="text-xs text-slate-500">{{ $orders->total() }} sipariş</span>
     </div>
-</body>
-</html>
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+            <thead>
+                <tr class="border-b border-slate-700">
+                    <th class="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Sipariş ID</th>
+                    <th class="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Müşteri</th>
+                    <th class="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Toplam Tutar</th>
+                    <th class="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Durum</th>
+                    <th class="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Tarih</th>
+                    <th class="text-right px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">İşlem</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-700/50">
+                @foreach($orders as $order)
+                <tr class="hover:bg-slate-700/30 transition-colors">
+                    <td class="px-6 py-4 text-slate-400 font-mono text-xs">{{ substr($order->id, 0, 8) }}…</td>
+                    <td class="px-6 py-4 text-slate-300">{{ $order->user->name ?? 'Misafir' }}</td>
+                    <td class="px-6 py-4 text-white font-semibold">₺{{ number_format($order->total_price, 2, ',', '.') }}</td>
+                    <td class="px-6 py-4">
+                        @php
+                            $badge = match($order->status) {
+                                'pending'    => 'bg-amber-500/20 text-amber-400',
+                                'paid'       => 'bg-blue-500/20 text-blue-400',
+                                'processing' => 'bg-indigo-500/20 text-indigo-400',
+                                'shipped'    => 'bg-emerald-500/20 text-emerald-400',
+                                'cancelled'  => 'bg-red-500/20 text-red-400',
+                                default      => 'bg-slate-500/20 text-slate-400',
+                            };
+                        @endphp
+                        <span class="px-2.5 py-1 rounded-full text-xs font-medium {{ $badge }}">{{ ucfirst($order->status) }}</span>
+                    </td>
+                    <td class="px-6 py-4 text-slate-500 text-xs">{{ $order->created_at->format('d.m.Y H:i') }}</td>
+                    <td class="px-6 py-4 text-right">
+                        <a href="{{ route('admin.orders.show', $order->id) }}" class="text-indigo-400 hover:text-indigo-300 text-xs font-medium">Detay</a>
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+    @if($orders->hasPages())
+    <div class="px-6 py-4 border-t border-slate-700">
+        {{ $orders->links() }}
+    </div>
+    @endif
+</div>
+@endsection
