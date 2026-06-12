@@ -1,0 +1,60 @@
+name: Deploy Laravel Project
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  web-deploy:
+    name: 🎉 Deploy
+    runs-on: ubuntu-latest
+    steps:
+    - name: 🚚 Get latest code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+        
+    - name: 🔍 PHP Syntax Check
+      run: |
+        echo "Checking PHP syntax..."
+        find app config routes resources database -type f -name '*.php' -exec php -l {} \; | grep -i "parse error\|fatal error" && exit 1 || echo "Syntax check passed!"
+
+    - name: 📂 Sync files via lftp
+      env:
+        FTP_SERVER: ${{ secrets.FTP_SERVER }}
+        FTP_USER: ${{ secrets.FTP_USERNAME }}
+        FTP_PASS: ${{ secrets.FTP_PASSWORD }}
+        FTP_DIR: ${{ secrets.FTP_REMOTE_DIR }}
+      run: |
+        sudo apt-get install -y lftp
+        lftp -c "
+          set ssl:verify-certificate no;
+          set ftp:ssl-allow yes;
+          set ftp:ssl-protect-data true;
+          set ftp:passive-mode true;
+          set net:reconnect-interval-base 5;
+          set net:reconnect-interval-multiplier 1;
+          set net:max-retries 5;
+          set net:timeout 30;
+          open -u '$FTP_USER','$FTP_PASS' $FTP_SERVER;
+          mirror --reverse --verbose --ignore-time \
+            --exclude-glob .git \
+            --exclude-glob .env \
+            --exclude-glob .env.* \
+            --exclude vendor/ \
+            --exclude node_modules/ \
+            --exclude tests/ \
+            --exclude 'storage/logs/' \
+            --exclude 'storage/framework/cache/' \
+            --exclude 'storage/framework/sessions/' \
+            --exclude 'storage/framework/views/' \
+            --exclude 'storage/app/' \
+            --exclude 'public/storage/' \
+            . $FTP_DIR;
+        "
