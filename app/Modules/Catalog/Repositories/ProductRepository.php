@@ -35,11 +35,18 @@ class ProductRepository extends BaseRepository
                 ->where('is_active', true)
                 ->firstOrFail();
         } catch (\Exception $e) {
-            // Throw the exception if it's ModelNotFoundException, otherwise return null
             if ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException) {
                 throw $e;
             }
             abort(500, 'Veritabanı bağlantı hatası');
         }
+    }
+
+    public function findByIdActive(string $id): ?Product
+    {
+        return $this->model
+            ->where('id', $id)
+            ->where('is_active', true)
+            ->firstOrFail();
     }
 }
