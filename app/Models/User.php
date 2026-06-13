@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Core\Traits\HasUuid;
+
 use App\Core\Traits\Auditable;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -13,7 +13,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, HasRoles, HasUuid, Auditable;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles, Auditable;
 
     protected $fillable = [
         'name',
