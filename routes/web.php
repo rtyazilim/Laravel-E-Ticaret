@@ -36,7 +36,17 @@ Route::get('/run-migrations', function () {
         \Illuminate\Support\Facades\DB::purge('mysql');
         \Illuminate\Support\Facades\DB::reconnect('mysql');
         
-        \Illuminate\Support\Facades\Artisan::call('migrate:fresh', ['--force' => true]);
+        // Manually drop all tables to simulate migrate:fresh robustly
+        \Illuminate\Support\Facades\Schema::withoutForeignKeyConstraints(function () {
+            $tables = \Illuminate\Support\Facades\DB::select('SHOW TABLES');
+            foreach ($tables as $table) {
+                $tableName = get_object_vars($table);
+                $tableName = reset($tableName);
+                \Illuminate\Support\Facades\Schema::drop($tableName);
+            }
+        });
+        
+        \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
         $migrateOutput = \Illuminate\Support\Facades\Artisan::output();
         
         \Illuminate\Support\Facades\Artisan::call('db:seed', ['--force' => true]);
