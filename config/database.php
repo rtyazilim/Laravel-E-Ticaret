@@ -47,7 +47,7 @@ return [
         'mysql' => [
             'driver' => 'mysql',
             'url' => env('DB_URL'),
-            'host' => 'localhost',
+            'host' => 'localhost', // Force lftp sync by changing file size
             'port' => '3306',
             'database' => 'rtyazil1_laravel',
             'username' => 'rtyazil1_laravel_merkez',
