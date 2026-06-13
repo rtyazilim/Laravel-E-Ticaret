@@ -36,7 +36,7 @@ Route::get('/run-migrations', function () {
         \Illuminate\Support\Facades\DB::purge('mysql');
         \Illuminate\Support\Facades\DB::reconnect('mysql');
         
-        \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+        \Illuminate\Support\Facades\Artisan::call('migrate:fresh', ['--force' => true]);
         $migrateOutput = \Illuminate\Support\Facades\Artisan::output();
         
         \Illuminate\Support\Facades\Artisan::call('db:seed', ['--force' => true]);
