@@ -38,6 +38,16 @@ Route::get('/run-migrations', function () {
     }
 });
 
+Route::get('/debug-env', function () {
+    $envPath = base_path('.env');
+    $envContent = file_exists($envPath) ? file_get_contents($envPath) : 'No .env found';
+    
+    $config = config('database.connections.mysql');
+    $default = config('database.default');
+    
+    return "<pre>DEFAULT DB: $default\n\nMYSQL CONFIG: " . print_r($config, true) . "\n\nENV FILE:\n$envContent</pre>";
+});
+
 // Checkout
 Route::prefix('checkout')->group(function () {
     Route::get('/', [CheckoutController::class, 'index'])->name('checkout.index');
