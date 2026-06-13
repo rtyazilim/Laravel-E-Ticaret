@@ -26,6 +26,9 @@ Route::prefix('cart')->group(function () {
 
 Route::get('/run-migrations', function () {
     try {
+        if (function_exists('opcache_reset')) {
+            opcache_reset();
+        }
         // Force the configuration dynamically at runtime to avoid all caching and .env issues
         config(['database.default' => 'mysql']);
         config(['database.connections.mysql.host' => 'localhost']);
@@ -42,7 +45,7 @@ Route::get('/run-migrations', function () {
             foreach ($tables as $table) {
                 $tableName = get_object_vars($table);
                 $tableName = reset($tableName);
-                \Illuminate\Support\Facades\Schema::drop($tableName);
+                \Illuminate\Support\Facades\DB::statement("DROP TABLE IF EXISTS `$tableName`");
             }
         });
         
