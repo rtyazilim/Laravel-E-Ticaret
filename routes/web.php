@@ -42,10 +42,33 @@ Route::get('/debug-env', function () {
     $envPath = base_path('.env');
     $envContent = file_exists($envPath) ? file_get_contents($envPath) : 'No .env found';
     
+    $configPath = config_path('database.php');
+    $configContent = file_exists($configPath) ? htmlspecialchars(file_get_contents($configPath)) : 'No database.php found';
+    
     $config = config('database.connections.mysql');
     $default = config('database.default');
     
-    return "<pre>DEFAULT DB: $default\n\nMYSQL CONFIG: " . print_r($config, true) . "\n\nENV FILE:\n$envContent</pre>";
+    return "<pre>DEFAULT DB: $default\n\nMYSQL CONFIG: " . print_r($config, true) . "\n\nDATABASE.PHP:\n$configContent\n\nENV FILE:\n$envContent</pre>";
+});
+
+Route::get('/fix-db', function () {
+    $envPath = base_path('.env');
+    if (!file_exists($envPath)) return 'No .env';
+    
+    $content = file_get_contents($envPath);
+    
+    // Replace the specific lines
+    $content = preg_replace('/^DB_HOST=.*$/m', 'DB_HOST=localhost', $content);
+    $content = preg_replace('/^DB_DATABASE=.*$/m', 'DB_DATABASE=rtyazil1_laravel', $content);
+    $content = preg_replace('/^DB_USERNAME=.*$/m', 'DB_USERNAME=rtyazil1_laravel_merkez', $content);
+    $content = preg_replace('/^DB_PASSWORD=.*$/m', 'DB_PASSWORD="9gPWkqy9PLwWH+t"', $content);
+    
+    file_put_contents($envPath, $content);
+    
+    // Clear cache
+    \Illuminate\Support\Facades\Artisan::call('config:clear');
+    
+    return 'Fixed .env and cleared config cache.';
 });
 
 // Checkout
