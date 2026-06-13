@@ -26,6 +26,16 @@ Route::prefix('cart')->group(function () {
 
 Route::get('/run-migrations', function () {
     try {
+        // Force the configuration dynamically at runtime to avoid all caching and .env issues
+        config(['database.default' => 'mysql']);
+        config(['database.connections.mysql.host' => 'localhost']);
+        config(['database.connections.mysql.database' => 'rtyazil1_laravel']);
+        config(['database.connections.mysql.username' => 'rtyazil1_laravel_merkez']);
+        config(['database.connections.mysql.password' => '9gPWkqy9PLwWH+t']);
+        
+        \Illuminate\Support\Facades\DB::purge('mysql');
+        \Illuminate\Support\Facades\DB::reconnect('mysql');
+        
         \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
         $migrateOutput = \Illuminate\Support\Facades\Artisan::output();
         
@@ -34,7 +44,7 @@ Route::get('/run-migrations', function () {
         
         return "Migrations:<br><pre>$migrateOutput</pre><br>Seeders:<br><pre>$seedOutput</pre>";
     } catch (\Exception $e) {
-        return "Error: " . $e->getMessage();
+        return "Error: " . $e->getMessage() . "<br>Trace:<br><pre>" . $e->getTraceAsString() . "</pre>";
     }
 });
 
